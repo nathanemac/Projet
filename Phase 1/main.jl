@@ -34,7 +34,7 @@ function build_graph(instance::String, title::String)
     add_edge!(graph_built, s_node, e_node, w_edge)
   end
 
-  return show(graph_built)
+  show(graph_built)
 end
 
 
