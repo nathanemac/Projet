@@ -6,6 +6,22 @@ include("edge.jl")
 
 
 """Construit un graphe à partir d'une instance TSP symétrique dont les poids sont donnés au format EXPLICIT et renvoie l'objet Graph associé"""
+#  Arguments
+# - `instance::String` : Le chemin vers le fichier TSP contenant les données de l'instance.
+# - `title::String` : Le titre du graphe construit.
+# Examples
+```
+julia> build_graph("instances/stsp/bays29.tsp", "Graph_Test")
+
+Graph Graph_Test has 29 nodes and 435 edges.
+Nodes:
+Node 1, data: [1150.0, 1760.0]
+Node 2, data: [630.0, 1660.0]
+# ... (d'autres nœuds et arêtes)
+Edge from 28 to 29, weight: 199.0
+Edge from 29 to 29, weight: 0.0
+```
+
 function build_graph(instance::String, title::String)
   
   header = read_header(instance)
@@ -20,6 +36,7 @@ function build_graph(instance::String, title::String)
 
   nodes_graph = read_nodes(header, instance)
   edges_graph = read_edges(header, instance)
+
   if isempty(nodes_graph)
     for i = 1:parse(Int64, header["DIMENSION"])
       dict_intermediaire = Dict(i => [])
@@ -40,16 +57,9 @@ function build_graph(instance::String, title::String)
     w_edge = edges_graph[i][3]
     add_edge!(graph_built, s_node, e_node, w_edge)
   end
-
   show(graph_built)
 end
 
 
 # Exemple d'utilisation du fichier main : 
-# header = read_header("Phase 1/instances/stsp/swiss42.tsp")
-# n = read_nodes(header, "Phase 1/instances/stsp/swiss42.tsp")
-# e = read_edges(header,  "Phase 1/instances/stsp/swiss42.tsp")
-
-
-# build_graph("Phase 1/instances/stsp/swiss42.tsp", "Graph_Test")
-
+# build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
