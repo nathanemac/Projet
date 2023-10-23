@@ -1,3 +1,6 @@
+#################################
+########### Phase 1 #############
+#################################
 """
 Type abstrait dont d'autres types d'arêtes dériveront.
 """
@@ -179,17 +182,35 @@ function read_edges(header::Dict{String, String}, filename::String)
   return edges
 end
 
+#################################
+########### Phase 2 #############
+#################################
 """
-Structure contenant les composantes connexes d'un graphe.
+Structure contenant une composante connexe d'un graphe.
+
+Exemple:
+    TODO
+"""
+mutable struct ConnexComponent{T} <: AbstractGraph{T}
+  name::String
+  nodes::Vector{ConnexNode{T}}
+  edges::Vector{Edge{T}}
+end
+
+# Constructeur pour ConnexComponent
+ConnexComponent(name::String, nodes::Vector{ConnexNode{T}}) where T = ConnexComponent(name, nodes, Edge{T}[])
+
+"""
+Structure contenant toutes les composantes connexes d'un graphe.
 
 Exemple:
     TODO
 """
 mutable struct ConnexGraph{T} <: AbstractGraph{T}
   name::String
-  nodes::Vector{ConnexNode{T}}
-  edges::Vector{Edge{T}}
+  components::Vector{ConnexComponent{T}}
 end
 
-# Constructeur pour ExtendedGraph
-ConnexGraph(name::String, nodes::Vector{Node{T}}) where T = ConnexGraph(name, nodes, Edge{T}[])
+# Constructeur pour ConnexComponent
+ConnexComponent(name::String) where T = ConnexComponent(name, Vector(ConnexComponent{T}[]))
+
