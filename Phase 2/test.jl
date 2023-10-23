@@ -16,6 +16,12 @@ graph = ConnexGraph("graph test", [connexcomp1, connexcomp2])
 
 parent(connexcomp1.nodes[2])
 
+
+##############################
+g = build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
+
+g.nodes
+
 function Kruskal(graph::ExtendedGraph)
   A = []
   k = 0

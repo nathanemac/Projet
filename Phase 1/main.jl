@@ -39,9 +39,10 @@ function build_graph(instance::String, title::String)
     w_edge = edges_graph[i][3]
     add_edge!(graph_built, s_node, e_node, w_edge)
   end
-  show(graph_built)
+  graph_built
 end
 
 
 # Exemple d'utilisation du fichier main : 
-build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
+g = build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
+show(g)
