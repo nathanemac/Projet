@@ -44,4 +44,4 @@ end
 
 
 # Exemple d'utilisation du fichier main : 
-# build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
+build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
