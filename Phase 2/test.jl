@@ -23,10 +23,19 @@ g = build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
 g.nodes
 
 function Kruskal(graph::ExtendedGraph)
-  A = []
+
+  A = typeof(g.edges[1])[]
+  S_connex = ConnexGraph("Graphe connexe", graph)
   k = 0
   S = graph.nodes
-  
+  for n in S
+    connex_n = ConnexNode(parse(Int, n.name), n.data, nothing)
+    push!(ConnexGraph, ConnexComponent("", connex_n))
+  end
+
+  sorted_edges = sort(g.edges, by = e -> e.weight)
+
 
 end
+
 

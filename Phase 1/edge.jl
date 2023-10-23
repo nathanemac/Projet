@@ -211,6 +211,5 @@ mutable struct ConnexGraph{T} <: AbstractGraph{T}
   components::Vector{ConnexComponent{T}}
 end
 
-# Constructeur pour ConnexComponent
-ConnexComponent(name::String) where T = ConnexComponent(name, Vector(ConnexComponent{T}[]))
-
+# Constructeur pour ConnexGraph
+ConnexGraph(name::String, graph::AbstractGraph{T}) where T = ConnexGraph(name, Vector(ConnexComponent{T}[]))
