@@ -14,4 +14,5 @@ connexcomp2 = ConnexComponent("connex component 2", [n3, n4, n5])
 
 graph = ConnexGraph("graph test", [connexcomp1, connexcomp2])
 
-connexcomp1.nodes[2].parents
+parent(connexcomp1.nodes[2])
+
