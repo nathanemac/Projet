@@ -178,3 +178,23 @@ function read_edges(header::Dict{String, String}, filename::String)
   close(file)
   return edges
 end
+
+"""
+Structure contenant les composantes connexes d'un graphe.
+
+Exemple:
+
+    node1 = Node("Joe", 3.14)
+    node2 = Node("Steve", exp(1))
+    edge = Edge(node1, node2)       # Arête non pondérée
+    edge = Edge(node1, node2, 5.6)  # Arête pondérée avec un poids de 5.6
+"""
+mutable struct ConnexGraph{T} <: AbstractGraph{T}
+  name::String
+  nodes::Vector{Node{T}}
+  edges::Vector{Edge{T}}
+end
+
+
+# Constructeur pour ExtendedGraph
+ConnexGraph(name::String, nodes::Vector{Node{T}}) where T = ConnexGraph(name, nodes, Edge{T}[])
