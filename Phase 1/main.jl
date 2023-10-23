@@ -26,11 +26,11 @@ function build_graph(instance::String, title::String)
   
   header = read_header(instance)
   if header["EDGE_WEIGHT_TYPE"] != "EXPLICIT"
-    @warn "weight type format must be `EXPLICIT`"
+    @warn "weight type format must be EXPLICIT"
     return "Current format is :", header["EDGE_WEIGHT_TYPE"]
   end
   if header["EDGE_WEIGHT_FORMAT"] != "FULL_MATRIX"
-    @warn "edge weight format must be `FULL_MATRIX`"
+    @warn "edge weight format must be FULL_MATRIX"
     return "Current format is :", header["EDGE_WEIGHT_FORMAT"]
   end
 
