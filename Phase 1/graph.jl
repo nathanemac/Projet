@@ -112,3 +112,7 @@ mutable struct ConnexGraph{T} <: AbstractGraph{T}
 end
 
 ConnexGraph(name::String, graph::AbstractGraph{T}) where T = ConnexGraph(name, Vector(ConnexComponent{T}[]))
+
+function add_connex_component!(g::ConnexGraph{T}, c::ConnexComponent{T}) where T
+  push!(g.components, c)
+end

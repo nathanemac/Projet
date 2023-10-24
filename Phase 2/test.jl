@@ -31,7 +31,34 @@ graph_test = ConnexGraph("graph test", [connexcomp1, connexcomp2])
 
 
 ##############################
+
+# Questions 1, 2
 graph = build_graph("Phase 1/instances/stsp/bays29.tsp", "Graph_Test")
 mst_graph = Kruskal(graph)
 
 
+# Question 3
+
+# Ajout de l'attribut "rang"
+n1 = Node("n1", [1.0, 2.0], nothing, 0)
+n2 = Node("n2", [2.0, 3.0], nothing, 0)
+
+# Union via le rang : 
+
+union!([n1, n2])
+find_root!(n2) # Le parent de n2 est à présent n1
+
+# Exemple sur davantage de noeuds : 
+CC = ConnexComponent("ex", [Node("1", 0.5)])
+for i = 2:10
+  push!(CC.nodes, Node("n$i", rand(1)[1]))
+end
+CC.nodes
+
+union!(CC.nodes) # le premier noeud sert de racine, les 9 autres sont des enfants directs du noeud 1
+
+
+# TODO : répondre question sur le rang
+
+##########
+# Question 4
