@@ -1,43 +1,21 @@
 #################################
 ########### Phase 1 #############
 #################################
-"""
-Type abstrait dont d'autres types d'arêtes dériveront.
-"""
+
 abstract type AbstractEdge{T, U} end
 
-"""
-Type représentant les arêtes d'un graphe.
-
-Exemple:
-
-    node1 = Node("Joe", 3.14)
-    node2 = Node("Steve", exp(1))
-    edge = Edge(node1, node2)       # Arête non pondérée
-    edge = Edge(node1, node2, 5.6)  # Arête pondérée avec un poids de 5.6
-"""
 mutable struct Edge{T, U} <: AbstractEdge{T, U}
   start_node::Node{T}
   end_node::Node{T}
   weight::U
 end
 
-# Constructeur pour les arêtes non pondérées
 Edge(s::Node{T}, e::Node{T}) where T = Edge(s, e, nothing)
 
-# on présume que toutes les arêtes dérivant d'AbstractEdge
-# posséderont des champs `start_node`, `end_node` et `weight`.
-
-"""Renvoie le noeud de départ de l'arête."""
 start_node(edge::AbstractEdge) = edge.start_node
-
-"""Renvoie le noeud d'arrivée de l'arête."""
 end_node(edge::AbstractEdge) = edge.end_node
-
-"""Renvoie le poids de l'arête."""
 weight(edge::AbstractEdge) = edge.weight
 
-"""Affiche une arête."""
 function show(edge::AbstractEdge)
     if edge.weight === nothing
         println("Edge from ", name(start_node(edge)), " to ", name(end_node(edge)))
@@ -46,60 +24,6 @@ function show(edge::AbstractEdge)
     end
 end  
 
-# Définir un nouveau type `ExtendedGraph`
-mutable struct ExtendedGraph{T} <: AbstractGraph{T}
-  name::String
-  nodes::Vector{Node{T}}
-  edges::Vector{Edge{T}}
-end
-
-# Constructeur pour ExtendedGraph
-ExtendedGraph(name::String, nodes::Vector{Node{T}}) where T = ExtendedGraph(name, nodes, Edge{T}[])
-
-# Fonction pour ajouter un noeud à un AbstractGraph : 
-"""Ajoute un noeud à un ExtendedGraph"""
-function add_node!(graph::AbstractGraph{T}, node::Node{T}) where T
-  push!(graph.nodes, node)
-  graph
-end
-
-# Fonction pour ajouter une arête à ExtendedGraph
-"""Ajoute une arête à un ExtendedGraph"""
-function add_edge!(graph::ExtendedGraph{T}, start_node::Node{T}, end_node::Node{T}, weight = nothing) where {T}
-  # Vérifier si les nœuds existent déjà dans le graphe
-  if start_node ∉ graph.nodes || end_node ∉ graph.nodes
-      throw(ArgumentError("One or both nodes are not part of the graph"))
-  end
-
-  # Créer la nouvelle arête
-  new_edge = Edge(start_node, end_node, weight)
-  
-  # Vérifier si l'arête existe déjà
-  for edge in graph.edges
-      if (edge.start_node == start_node && edge.end_node == end_node) || 
-         (edge.start_node == end_node && edge.end_node == start_node)
-         return  # simplement retourner si l'arête existe déjà, évitant une erreur
-
-      end
-  end
-
-  # Ajouter la nouvelle arête au graphe
-  push!(graph.edges, new_edge)
-end
-
-# Affichage de ExtendedGraph
-"""Extension de la fonction `show`pour un ExtendedGraph"""
-function show(graph::ExtendedGraph{T}) where {T}
-  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", length(graph.edges), " edges.")
-  println("Nodes:")
-  for node in nodes(graph)
-      show(node)
-  end
-  println("Edges:")
-  for edge in graph.edges
-      show(edge)
-  end
-end
 
 """Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau."""
 function read_edges(header::Dict{String, String}, filename::String)
@@ -181,35 +105,3 @@ function read_edges(header::Dict{String, String}, filename::String)
   close(file)
   return edges
 end
-
-#################################
-########### Phase 2 #############
-#################################
-"""
-Structure contenant une composante connexe d'un graphe.
-
-Exemple:
-    TODO
-"""
-mutable struct ConnexComponent{T} <: AbstractGraph{T}
-  name::String
-  nodes::Vector{ConnexNode{T}}
-  edges::Vector{Edge{T}}
-end
-
-# Constructeur pour ConnexComponent
-ConnexComponent(name::String, nodes::Vector{ConnexNode{T}}) where T = ConnexComponent(name, nodes, Edge{T}[])
-
-"""
-Structure contenant toutes les composantes connexes d'un graphe.
-
-Exemple:
-    TODO
-"""
-mutable struct ConnexGraph{T} <: AbstractGraph{T}
-  name::String
-  components::Vector{ConnexComponent{T}}
-end
-
-# Constructeur pour ConnexGraph
-ConnexGraph(name::String, graph::AbstractGraph{T}) where T = ConnexGraph(name, Vector(ConnexComponent{T}[]))
