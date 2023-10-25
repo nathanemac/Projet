@@ -57,46 +57,73 @@ end
 
 #############################
 # Pour les 2 heuristiques 
-function find_root!(node::Node)
-  if node.parent === nothing
-      return node
+
+function find_root!(CC::ConnexComponent)
+  # Ajout d'un flag si la racine de cette composante a déjà été trouvée
+  root = CC.nodes[1]
+  if max(x -> CC.rank)
+  for node in CC.nodes
+  # On s'arrête dès que l'on trouve un noeud sans parent
+    if node.parent === nothing
+      root = node
+      root.rank +=1
+      break
+    end
   end
-  node.parent = find_root!(node.parent)
-  return node.parent
+  
+  # On fait pointer les nœuds directement vers la racine.
+  for node in CC.nodes
+    if node === root
+      continue
+    else
+      node.parent = root
+    end
+  end
+  root
 end
 
-# Trouver le représentant (racine) d'un nœud avec compression de chemin
-function find_root!(node::Node)
-  if node.parent == nothing
-      return node
+function union_roots!(root1::AbstractNode, root2::AbstractNode)
+
+  # Lie la racine de rang inférieur à la racine de rang supérieur
+  if root1.rank > root2.rank
+      root2.parent = root1
+      root1.rank += 1
+  elseif root1.rank < root2.rank
+      root1.parent = root2
+      root2.rank += 1
   else
-      # Compression de chemin
-      node.parent = find_root!(node.parent)
-      return node.parent
+      # Si les deux racines ont le même rang, lie l'une à l'autre et augmentez le rang de la racine parent
+      root2.parent = root1
+      root1.rank += 1
   end
+  return
 end
 
-# Union d'un vecteur de nœuds en utilisant le rang
-function union!(nodes::Vector{Node})
-  # Assurez-vous que le vecteur n'est pas vide
-  if isempty(nodes)
+function union_all!(CC1::ConnexComponent, CC2::ConnexComponent)
+  # Trouver les racines des deux composantes
+  root1 = find_root!(CC1)
+  root2 = find_root!(CC2)
+
+  # Si les racines sont déjà les mêmes, rien à faire
+  if root1 === root2
       return
   end
 
-  # Trouvez les racines de tous les nœuds
-  roots = [find_root!(node) for node in nodes]
+  # Sinon, unir les deux racines
+  union_roots!(root1, root2)
 
-  # Triez les racines par rang (en ordre décroissant)
-  sort!(roots, by=n -> n.rank, rev=true)
-
-  # Pour chaque racine, sauf la première, faites de la première racine son parent.
-  # Si deux racines ont le même rang, augmentez le rang de la première racine.
-  for i in 2:length(roots)
-      if roots[1].rank == roots[i].rank
-          roots[1].rank += 1
-      end
-      roots[i].parent = roots[1]
+  # Ajoute les noeuds de la composante fille aux noeuds de la composante mère
+  if root1.rank > root2.rank
+    append!(CC1.nodes, CC2.nodes)
+    empty!(CC2.nodes)
+    return CC1.nodes
+  else 
+    append!(CC2.nodes, CC1.nodes)
+    empty!(CC2.nodes)
+    return CC2.nodes
   end
 end
+
+
 
 
