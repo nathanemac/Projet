@@ -36,15 +36,15 @@ end
 
 PriorityQueue{T}() where T = PriorityQueue(T[])
 
-"""Retire et renvoie l'élément ayant la plus haute priorité d'une file de priorité."""
-function popfirst!(q::PriorityQueue)
-  highest = q.items[1]
+"""Retire et renvoie l'élément ayant la plus faible priorité d'une file de priorité."""
+function pop_lowest!(q::PriorityQueue)
+  lowest = q.items[1]
   for item in q.items[2:end]
-    if item > highest
-      highest = item
+    if item < lowest
+      lowest = item
     end
   end
-  idx = findfirst(x -> x == highest, q.items)
+  idx = findfirst(x -> x == lowest, q.items)
   deleteat!(q.items, idx)
-  highest
+  lowest
 end

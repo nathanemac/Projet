@@ -1,5 +1,6 @@
 import Base.show
 import Base.push!
+import Base.==
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -59,3 +60,11 @@ Node(name::String, data::T, parent::Union{Node{T}, Nothing}) where T = Node{T}(n
 
 # Constructeur pour un Node sans parent et initialisation du rang à 0 :
 Node(name::String, data::T) where T = Node{T}(name, data, nothing, 0)
+
+"""compare deux noeuds"""
+function ==(n1::AbstractNode{T}, n2::AbstractNode{T}) where T 
+  return n1.name == n2.name && 
+         n1.data == n2.data && 
+         n1.parent == n2.parent && 
+         n1.rank == n2.rank
+end

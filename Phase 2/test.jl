@@ -66,12 +66,13 @@ union_all!(CC1, CC3)
 # Question 4
 
 
-function Prim(graph::ExtendedGraph, st_node::AbstractNode{T})
+function Prim(graph::ExtendedGraph, st_node::AbstractNode)
 
   # Initialisation du graphe résultant
-  graph_res = ExtendedGraph("res", [st_node])
+  graph_res = ExtendedGraph("res", Vector{typeof(st_node)}())
 
   N = graph.nodes
+  E = graph.edges
 
   # On recherche st_node dans le graphe donné
   idx = findfirst(x -> x == st_node, N)
@@ -83,11 +84,55 @@ function Prim(graph::ExtendedGraph, st_node::AbstractNode{T})
   # Création de la file de priorité pour traiter les noeuds
   q = PriorityQueue([PriorityItem(Inf, n) for n in N])
   priority!(q.items[idx], 0)
-  deleteat!(q.items, idx)
-
-  # Boucle principale : ...
 
 
+  # Boucle principale :
+  while !isempty(q.items)
+    # On choisit le noeud avec la priorité la plus faible (l'arête la plus légère)
+    # Pour la première itération, st_node est le noeud avec la plus faible priorité
+    u = pop_lowest!(q)
+    add_node!(graph_res, u.data)
+    neighbours = neighbours_node(u.data, graph)
+    # la ligne suivante extrait la liste des noeuds voisins de u.data. Le noeud à considérer comme prioritaire est le premier de cette liste. 
+    neighbours = [edge.start_node === u.data ? edge.end_node : edge.start_node for edge in neighbours_node(u.data, graph)]
+
+    # la ligne suivante extrait la liste des noeuds voisins de u.data. 
+    neighbours = [edge.start_node === u.data ? edge.end_node : edge.start_node for edge in neighbours_node(u.data, graph)]
+
+    # Chercher le premier voisin qui est encore dans q.items
+    i = 1
+    while i <= length(neighbours)
+      idx = findfirst(item -> item.data == neighbours[i], q.items)
+      if idx !== nothing
+        # on modifie la priorité du noeud à considérer pour l'ajouter au graphe à la prochaine itération
+        priority!(q.items[idx], 0)
+        q.items[idx].data.parent = graph_res.nodes[end]
+        break
+      else
+        i += 1
+      end
+    end
+  end
+  graph_res.nodes[end].parent = graph_res.nodes[end-1] # Lie l'avant dernier noeud avec le dernier
+
+
+  return graph_res
 end
+
+"""Retourne l'ensemble des arêtes de graph contenant n, triées par ordre croissant de poids"""
+function neighbours_node(n::AbstractNode, graph::ExtendedGraph)
+  E = graph.edges
+  neighbours = [] # vecteur qui contiendra les arêtes voisines
+
+  for e in E
+    if e.start_node == n || e.end_node == n # si n appartient à l'arête e
+      push!(neighbours, e)
+    end
+  end
+  return sort(neighbours, by=edge -> edge.weight)
+end
+
+
+
 
 
