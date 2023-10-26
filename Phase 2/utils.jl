@@ -148,12 +148,12 @@ function neighbours_node(n::AbstractNode, graph::ExtendedGraph)
 end
 
 """Implémente l'algorithme de Prim pour un graph::ExtendedGraph et un noeud du graphe"""
-function Prim(graph::ExtendedGraph, st_node::AbstractNode)
+function Prim(graph::ExtendedGraph; st_node::AbstractNode=graph.nodes[1])
 
   N = graph.nodes
   E = graph.edges
   # Initialisation du graphe résultant
-  graph_res = ExtendedGraph("res Prim", N, Edge{Vector{Float64}, Float64}[])
+  graph_res = ExtendedGraph("res Prim", N, typeof(E[1])[])
 
 
   # On recherche st_node dans le graphe donné
