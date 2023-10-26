@@ -1,5 +1,6 @@
-###########################
-# Pour Kruskal 
+###############################
+#### Algorithme de Kruskal ####
+###############################
 
 function find_component(Components, node)
   # Trouve et renvoie la composante connexe à laquelle appartient le noeud donné
@@ -21,11 +22,12 @@ end
 
 
 function Kruskal(graph::ExtendedGraph)
-
   A0 = typeof(graph.edges[1])[]
   A = graph.edges
   S_connex = ConnexGraph("Graphe connexe", graph)
   S = graph.nodes
+
+  res = ExtendedGraph("res Kruskal", S, A0)
 
   # Chaque sommet du graphe est ajouté comme ConnexComponent à un ConnexGraph initialement vide
   for n in S
@@ -51,12 +53,12 @@ function Kruskal(graph::ExtendedGraph)
         merge_components!(Components, start_component, end_component)
     end
   end
-
-  return A0
+  return res
 end
 
-#############################
-# Pour les 2 heuristiques 
+#################################
+#### Pour les 2 heuristiques ####
+#################################
 
 function find_root!(CC::ConnexComponent)
 
@@ -127,6 +129,71 @@ function union_all!(CC1::ConnexComponent, CC2::ConnexComponent)
   end
 end
 
+
+############################
+#### Algorithme de Prim ####
+############################
+
+"""Retourne l'ensemble des arêtes de graph contenant n, triées par ordre croissant de poids"""
+function neighbours_node(n::AbstractNode, graph::ExtendedGraph)
+  E = graph.edges
+  neighbours = [] # vecteur qui contiendra les arêtes voisines
+
+  for e in E
+    if e.start_node == n || e.end_node == n # si n appartient à l'arête e
+      push!(neighbours, e)
+    end
+  end
+  return sort(neighbours, by=edge -> edge.weight)
+end
+
+"""Implémente l'algorithme de Prim pour un graph::ExtendedGraph et un noeud du graphe"""
+function Prim(graph::ExtendedGraph, st_node::AbstractNode)
+
+  N = graph.nodes
+  E = graph.edges
+  # Initialisation du graphe résultant
+  graph_res = ExtendedGraph("res Prim", N, Edge{Vector{Float64}, Float64}[])
+
+
+  # On recherche st_node dans le graphe donné
+  idx = findfirst(x -> x == st_node, N)
+  if idx === nothing
+    @warn "starting node not in graph"
+    return
+  end
+
+  # Création de la file de priorité pour traiter les noeuds
+  q = PriorityQueue([PriorityItem(Inf, n) for n in N])
+  priority!(q.items[idx], 0)
+  visited = Set{AbstractNode}() # Set pour vérifier les noeuds visités
+
+  # Boucle principale :
+  while !isempty(q.items)
+    # On choisit le noeud avec la priorité la plus faible (l'arête la plus légère)
+    u = pop_lowest!(q)
+    push!(visited, u.data)
+
+    if u.data.parent !== nothing
+      # Trouver l'arête entre u et son parent et l'ajouter au graph_res
+      edge_idx = findfirst(e -> (e.start_node == u.data && e.end_node == u.data.parent) || (e.start_node == u.data.parent && e.end_node == u.data), E)
+      edge = E[edge_idx]
+      push!(graph_res.edges, edge)
+    end
+
+    neighbours = neighbours_node(u.data, graph)
+
+    for edge in neighbours
+      v = edge.start_node === u.data ? edge.end_node : edge.start_node
+      if !(v in visited) && edge.weight < get_priority(q, v)
+        v.parent = u.data
+        update_priority!(q, v, edge.weight)
+      end
+    end
+  end
+
+  return graph_res
+end
 
 
 

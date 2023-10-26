@@ -48,3 +48,21 @@ function pop_lowest!(q::PriorityQueue)
   deleteat!(q.items, idx)
   lowest
 end
+
+function update_priority!(q::PriorityQueue, item_data, new_priority)
+  for pi in q.items
+    if pi.data == item_data
+      priority!(pi, new_priority)
+      return
+    end
+  end
+end
+
+function get_priority(q::PriorityQueue, item_data)
+  for pi in q.items
+    if pi.data == item_data
+      return pi.priority
+    end
+  end
+  return Inf # Si l'élément n'est pas trouvé dans la file de priorité
+end
