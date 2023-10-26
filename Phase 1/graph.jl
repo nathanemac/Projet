@@ -102,9 +102,10 @@ mutable struct ConnexComponent{T} <: AbstractGraph{T}
   name::String
   nodes::Vector{Node{T}}
   edges::Vector{Edge{T}}
+  root::Union{AbstractNode{T}, Nothing}
 end
 
-ConnexComponent(name::String, nodes::Vector{Node{T}}) where T = ConnexComponent(name, nodes, Edge{T}[])
+ConnexComponent(name::String, nodes::Vector{Node{T}}) where T = ConnexComponent(name, nodes, Edge{T}[], nothing)
 
 mutable struct ConnexGraph{T} <: AbstractGraph{T}
   name::String

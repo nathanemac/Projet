@@ -59,14 +59,19 @@ end
 # Pour les 2 heuristiques 
 
 function find_root!(CC::ConnexComponent)
-  # Ajout d'un flag si la racine de cette composante a déjà été trouvée
+
+  # Renvoie la racine de la composante si elle n'est pas déjà déterminée
+  if CC.root !== nothing
+    return CC.root
+  end
+
   root = CC.nodes[1]
-  if max(x -> CC.rank)
   for node in CC.nodes
-  # On s'arrête dès que l'on trouve un noeud sans parent
+    # On s'arrête dès que l'on trouve un noeud sans parent
     if node.parent === nothing
       root = node
-      root.rank +=1
+      root.rank += 1
+      CC.root = root
       break
     end
   end
@@ -87,10 +92,8 @@ function union_roots!(root1::AbstractNode, root2::AbstractNode)
   # Lie la racine de rang inférieur à la racine de rang supérieur
   if root1.rank > root2.rank
       root2.parent = root1
-      root1.rank += 1
   elseif root1.rank < root2.rank
       root1.parent = root2
-      root2.rank += 1
   else
       # Si les deux racines ont le même rang, lie l'une à l'autre et augmentez le rang de la racine parent
       root2.parent = root1

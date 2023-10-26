@@ -1,12 +1,13 @@
-include("../Phase 1/edge.jl")
 include("../Phase 1/node.jl")
+include("../Phase 1/edge.jl")
 include("../Phase 1/graph.jl")
 include("../Phase 1/read_stsp.jl")
 include("../Phase 1/main.jl")
-include("../Phase 1/utils.jl")
+include("utils.jl")
+include("PriorityQueue.jl")
 
 n1 = Node("1", [1.0, 3.0], nothing)
-n2 = Node("2", [2.0, 0.0, 1.0])
+n2 = Node("2", [2.0, 1.0])
 n3 = Node("3", [1.0, 2.0], nothing)
 n4 = Node("4", [1.0, 2.0])
 n5 = Node("5", [2.0, 3.9])
@@ -39,26 +40,54 @@ mst_graph = Kruskal(graph)
 
 # Question 3
 
-# Ajout de l'attribut "rang"
-n1 = Node("n1", [1.0, 2.0], nothing, 0)
-n2 = Node("n2", [2.0, 3.0], nothing, 0)
-
-# Union via le rang : 
-
-union!([n1, n2])
-find_root!(n2) # Le parent de n2 est à présent n1
-
-# Exemple sur davantage de noeuds : 
-CC = ConnexComponent("ex", [Node("1", 0.5)])
+# Exemple sur deux composantes connexes de même rang maximal : 
+CC1 = ConnexComponent("cc1", [Node("1", 0.5)])
 for i = 2:10
-  push!(CC.nodes, Node("n$i", rand(1)[1]))
+  push!(CC1.nodes, Node("n$i", rand(1)[1]))
 end
-CC.nodes
+CC2 = ConnexComponent("cc2", [Node("11", 0.8)])
+for i = 2:10
+  push!(CC2.nodes, Node("n$(i+10)", rand(1)[1]))
+end
 
-union!(CC.nodes) # le premier noeud sert de racine, les 9 autres sont des enfants directs du noeud 1
 
+union_all!(CC1, CC2)
 
+CC3 = ConnexComponent("cc3", [Node("21", 1.5)])
+for i = 2:5
+  push!(CC3.nodes, Node("n$(i+20)", rand(1)[1]))
+end
+
+union_all!(CC1, CC3)
 # TODO : répondre question sur le rang
+# sinon ça m'a l'air ok, à tester. 
 
 ##########
 # Question 4
+
+
+function Prim(graph::ExtendedGraph, st_node::AbstractNode{T})
+
+  # Initialisation du graphe résultant
+  graph_res = ExtendedGraph("res", [st_node])
+
+  N = graph.nodes
+
+  # On recherche st_node dans le graphe donné
+  idx = findfirst(x -> x == st_node, N)
+  if idx === nothing
+    @warn "starting node not in graph"
+    return
+  end
+
+  # Création de la file de priorité pour traiter les noeuds
+  q = PriorityQueue([PriorityItem(Inf, n) for n in N])
+  priority!(q.items[idx], 0)
+  deleteat!(q.items, idx)
+
+  # Boucle principale : ...
+
+
+end
+
+
