@@ -2,6 +2,9 @@
 ########### Phase 1 #############
 #################################
 
+println("Je t'aime")
+
+
 abstract type AbstractEdge{T, U} end
 
 mutable struct Edge{T, U} <: AbstractEdge{T, U}
