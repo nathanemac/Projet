@@ -78,6 +78,23 @@ end
 #### Pour les 2 heuristiques ####
 #################################
 
+"""
+    find_root!(CC::ConnexComponent)
+
+Trouve la racine de la composante connexe `CC`. Si la racine est déjà déterminée,
+la fonction la retourne simplement. Sinon, elle la détermine en cherchant le premier
+nœud sans parent et en le définissant comme racine. Ensuite, elle fait pointer tous
+les nœuds de la composante directement vers la racine.
+
+### Arguments
+- `CC` : une composante connexe de type `ConnexComponent`.
+
+### Retourne
+La racine de la composante connexe.
+
+### Modification en place
+Les nœuds de la composante connexe sont modifiés pour pointer vers la racine trouvée.
+"""
 function find_root!(CC::ConnexComponent)
 
   # Renvoie la racine de la composante si elle n'est pas déjà déterminée
@@ -107,6 +124,21 @@ function find_root!(CC::ConnexComponent)
   root
 end
 
+
+"""
+    union_roots!(root1::AbstractNode, root2::AbstractNode)
+
+Lier deux racines d'arbres en union-find. La racine de rang inférieur est liée
+à la racine de rang supérieur. Si les rangs sont égaux, une des racines est liée
+à l'autre et son rang est augmenté de 1.
+
+### Arguments
+- `root1` : le premier noeud racine.
+- `root2` : le second noeud racine.
+
+### Modification en place
+Les parents et les rangs des racines sont potentiellement modifiés pour refléter l'union.
+"""
 function union_roots!(root1::AbstractNode, root2::AbstractNode)
 
   # Lie la racine de rang inférieur à la racine de rang supérieur
@@ -122,6 +154,23 @@ function union_roots!(root1::AbstractNode, root2::AbstractNode)
   return
 end
 
+"""
+    union_all!(CC1::ConnexComponent, CC2::ConnexComponent)
+
+Unir deux composantes connexes. Trouve les racines des deux composantes
+et les unit en utilisant `union_roots!`. Ensuite, les nœuds de la composante
+de rang inférieur sont ajoutés à ceux de la composante de rang supérieur.
+
+### Arguments
+- `CC1` : la première composante connexe.
+- `CC2` : la seconde composante connexe.
+
+### Retourne
+La liste des nœuds de la composante connexe qui a absorbé l'autre.
+
+### Modification en place
+Les nœuds de la composante connexe de rang inférieur sont déplacés vers celle de rang supérieur.
+"""
 function union_all!(CC1::ConnexComponent, CC2::ConnexComponent)
   # Trouver les racines des deux composantes
   root1 = find_root!(CC1)
