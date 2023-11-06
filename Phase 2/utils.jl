@@ -201,7 +201,23 @@ end
 #### Algorithme de Prim ####
 ############################
 
-"""Retourne l'ensemble des arêtes de graph contenant n, triées par ordre croissant de poids"""
+"""
+    neighbours_node(n::AbstractNode, graph::ExtendedGraph)
+
+Retourne un ensemble d'arêtes du graph `graph` contenant le nœud `n`, triées par ordre croissant de leur poids. 
+Cela permet de déterminer les voisins d'un nœud dans le cadre d'algorithmes graphiques.
+
+### Arguments
+- `n` : Le nœud pour lequel les voisins sont recherchés.
+- `graph` : Le graphe de type `ExtendedGraph` contenant le nœud `n`.
+
+### Retourne
+Un vecteur des arêtes voisines du nœud `n`, trié par ordre croissant de poids.
+
+### Exemples
+```julia
+neighbours = neighbours_node(monNode, monGraphe)
+"""
 function neighbours_node(n::AbstractNode, graph::ExtendedGraph)
   E = graph.edges
   neighbours = [] # vecteur qui contiendra les arêtes voisines
@@ -214,7 +230,25 @@ function neighbours_node(n::AbstractNode, graph::ExtendedGraph)
   return sort(neighbours, by=edge -> edge.weight)
 end
 
-"""Implémente l'algorithme de Prim pour un graph::ExtendedGraph et un noeud du graphe"""
+"""
+    Prim(graph::ExtendedGraph; st_node::AbstractNode = graph.nodes[1])
+
+Implémente l'algorithme de Prim pour un graphe donné. Cet algorithme construit un arbre
+couvrant de poids minimum à partir d'un graphe pondéré. Le noeud de départ par défaut est le premier
+nœud du graphe, mais un noeud de départ différent peut être spécifié.
+
+### Arguments
+- `graph` : Le graphe sur lequel appliquer l'algorithme de Prim.
+- `st_node` : Le noeud de départ pour l'algorithme. Par défaut, c'est le premier nœud du graphe.
+
+### Retourne
+Le graphe résultant après application de l'algorithme de Prim, sous forme d'un `ExtendedGraph`.
+
+### Exemples
+```julia
+grapheResultant = Prim(monGraphe)
+grapheResultant = Prim(monGraphe, st_node=monNode)
+"""
 function Prim(graph::ExtendedGraph; st_node::AbstractNode=graph.nodes[1])
 
   N = graph.nodes
