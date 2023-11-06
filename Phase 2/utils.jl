@@ -2,58 +2,76 @@
 #### Algorithme de Kruskal ####
 ###############################
 
-function find_component(Components, node)
-  # Trouve et renvoie la composante connexe à laquelle appartient le noeud donné
-  for component in Components
-      if node in component.nodes
-          return component
-      end
-  end
-  return nothing
-end
+# find_component recherche la composante connexe d'un noeud donné.
+"""
+    find_component(components, node)
 
-function merge_components!(components, component1, component2)
-  # Fusionne deux composantes connexes en une seule et supprime l'ancienne composante
-  for node in component2.nodes
-      push!(component1.nodes, node)
-  end
-  deleteat!(components, findfirst(x -> x == component2, components))
-end
+Recherche et renvoie la composante connexe à laquelle appartient le noeud `node`.
+- `components` est un tableau de composantes connexes.
+- `node` est le noeud dont la composante connexe est recherchée.
 
-
-function Kruskal(graph::ExtendedGraph)
-  A0 = typeof(graph.edges[1])[]
-  A = graph.edges
-  S_connex = ConnexGraph("Graphe connexe", graph)
-  S = graph.nodes
-
-  res = ExtendedGraph("res Kruskal", S, A0)
-
-  # Chaque sommet du graphe est ajouté comme ConnexComponent à un ConnexGraph initialement vide
-  for n in S
-    add_connex_component!(S_connex, ConnexComponent("", [n]))
-  end
-
-  # Tri des arêtes par ordre croissant des poids
-  A_sorted = sort(A, by = e -> e.weight)
-  Components = S_connex.components
-  
-  # Traitement des arêtes
-  for a in A_sorted
-    # Pour chaque arête, on détermine les composantes connexes auxquelles appartiennent les sommets de départ et d'arrivée
-    start_component = find_component(Components, a.start_node)
-    end_component = find_component(Components, a.end_node)
-
-    # Si les deux sommets ne font pas partie de la même composante connexe
-    if start_component !== end_component
-        # Ajoutez l'arête à A0
-        push!(A0, a)
-        
-        # Fusionne les deux composantes connexes
-        merge_components!(Components, start_component, end_component)
+Renvoie la composante connexe trouvée ou `nothing` si le noeud n'est pas trouvé.
+"""
+function find_component(components, node)
+    for component in components
+        if node in component.nodes
+            return component
+        end
     end
-  end
-  return res
+    return nothing
+end
+
+# merge_components! fusionne deux composantes connexes en une seule.
+"""
+    merge_components!(components, component1, component2)
+
+Fusionne deux composantes connexes `component1` et `component2` en une seule.
+- `components` est le tableau contenant toutes les composantes.
+- `component1` et `component2` sont les composantes à fusionner.
+
+Supprime `component2` du tableau `components` après fusion.
+"""
+function merge_components!(components, component1, component2)
+    for node in component2.nodes
+        push!(component1.nodes, node)
+    end
+    deleteat!(components, findfirst(x -> x == component2, components))
+end
+
+# Kruskal implémente l'algorithme de Kruskal pour trouver l'arbre couvrant minimal d'un graphe.
+"""
+    Kruskal(graph::ExtendedGraph)
+
+Implémente l'algorithme de Kruskal pour trouver l'arbre couvrant minimal d'un graphe.
+- `graph` est un graphe étendu avec des sommets et des arêtes.
+
+Crée un `ExtendedGraph` représentant l'arbre couvrant minimal trouvé.
+"""
+function Kruskal(graph::ExtendedGraph)
+    A0 = typeof(graph.edges[1])[]
+    A = graph.edges
+    S_connex = ConnexGraph("Graphe connexe", graph)
+    S = graph.nodes
+
+    res = ExtendedGraph("res Kruskal", S, A0)
+
+    for n in S
+        add_connex_component!(S_connex, ConnexComponent("", [n]))
+    end
+
+    A_sorted = sort(A, by = e -> e.weight)
+    Components = S_connex.components
+
+    for a in A_sorted
+        start_component = find_component(Components, a.start_node)
+        end_component = find_component(Components, a.end_node)
+
+        if start_component !== end_component
+            push!(A0, a)
+            merge_components!(Components, start_component, end_component)
+        end
+    end
+    return res
 end
 
 #################################
