@@ -26,4 +26,3 @@ G_cours = ExtendedGraph("graphe du cours", [a, b, c, d, e, f, g, h, i], [e1, e2,
 
 graph_cours_kruskal = Kruskal(G_cours)
 graph_cours_prim = Prim(G_cours, st_node = a)
-
